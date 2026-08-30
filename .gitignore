@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.python-version
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 运行产物（报告 / PDF / 基准库等）
+output/
+*.sqlite
+*.sqlite3
+*.db
+
+# 测试与缓存
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 项目书（按需求排除，不上传）
+智采慧鉴_项目书.docx
