@@ -14,7 +14,7 @@ def grade_deviation(rate: float | None) -> str:
     if rate is None:
         return "unknown"
     if rate > 0.5:
-        return "high"  # 异常高价 / 围标嫌疑
+        return "high"
     if rate > 0.3 or rate < -0.3:
-        return "medium"  # 偏离偏高 / 异常低价 / 不平衡报价嫌疑
+        return "medium"
     return "low"

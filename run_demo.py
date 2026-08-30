@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
-from zhicai.core.llm import MockLLM
 from zhicai.db.benchmark_store import BenchmarkStore
+from zhicai.llm import MockLLM
 from zhicai.pipeline import RiskPipeline, SourcingPipeline
 from zhicai.reporting import render_report_pdf
 
@@ -57,13 +58,25 @@ def make_sample_pdf(txt_path: Path, pdf_path: Path) -> None:
         font_name = "CJK"
 
     style = ParagraphStyle("cjk", fontName=font_name, fontSize=11, leading=17)
-    doc = SimpleDocTemplate(str(pdf_path), pagesize=A4, rightMargin=18 * mm, leftMargin=18 * mm, topMargin=18 * mm, bottomMargin=18 * mm)
+    doc = SimpleDocTemplate(
+        str(pdf_path),
+        pagesize=A4,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=18 * mm,
+        bottomMargin=18 * mm,
+    )
     story = [Paragraph(line.replace(" ", "&nbsp;") if line.strip() else "&nbsp;", style) for line in txt_path.read_text(encoding="utf-8").splitlines()]
     story.insert(0, Spacer(1, 6))
     doc.build(story)
 
 
 def main() -> None:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
     ap = argparse.ArgumentParser(description="智采慧鉴端到端演示")
     ap.add_argument("--db", default=str(OUTPUT / "benchmarks.sqlite"))
     ap.add_argument("--bid", default=str(ROOT / "examples" / "sample_bid.txt"))

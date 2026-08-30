@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .llm import LLMProvider
+from ..llm import LLM
 from .state import StateManager
 from .task_result import TaskResult
 
@@ -14,7 +14,7 @@ class BaseAgent(ABC):
     name: str = "agent"
     state_key: str | None = None
 
-    def __init__(self, llm: LLMProvider | None = None) -> None:
+    def __init__(self, llm: LLM | None = None) -> None:
         self.llm = llm
 
     @abstractmethod

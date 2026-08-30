@@ -1,11 +1,12 @@
-# 运行与离线测试所需（核心算法仅依赖标准库 + 以下解析/报告库）
-pdfplumber>=0.11
-pypdf>=4.0
-reportlab>=4.0
-streamlit>=1.35
+# 运行与离线测试所需
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+pymupdf>=1.24.0
+reportlab>=4.0.0
+streamlit>=1.35.0
 
-# 可选：接入真实 Qwen3（Ollama / vLLM 的 OpenAI 兼容接口）
-# openai>=1.0
+# 可选：真实浏览器自动化（browser-use，需 CDP 浏览器 + Qwen3-VL，离线演示不需要）
+# browser-use>=0.1.40
 
-# 可选：浏览器自动化（browser-use 走 CDP，真实环境启用）
-# browser-use
+# 可选：接入其它模型提供方时按需安装
+# langchain-community>=0.3.0

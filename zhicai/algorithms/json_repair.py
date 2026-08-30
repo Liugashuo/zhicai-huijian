@@ -52,14 +52,12 @@ def repair_json(text: str) -> str:
 
 
 def extract_json(text: str) -> Any:
-    """从任意文本中提取 JSON，先尝试直接解析，失败则修复后解析。"""
     text = (text or "").strip()
     for candidate in (text, repair_json(text)):
         try:
             return json.loads(candidate)
         except Exception:  # noqa: BLE001
             continue
-    # 最后兜底：尝试解析最外层第一个对象/数组切片。
     m = re.search(r"[\{\[].*[\}\]]", text, re.DOTALL)
     if m:
         try:

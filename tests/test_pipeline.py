@@ -3,8 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from zhicai.core.llm import MockLLM
 from zhicai.db.benchmark_store import BenchmarkStore
+from zhicai.llm import MockLLM
 from zhicai.pipeline import RiskPipeline, SourcingPipeline
 
 ROOT = Path(__file__).resolve().parents[1]

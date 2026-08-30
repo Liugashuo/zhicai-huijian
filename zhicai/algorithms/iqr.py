@@ -29,7 +29,6 @@ def filter_outliers(prices: list[float]) -> tuple[list[float], int, tuple[float,
 
 
 def benchmark_metrics(prices: list[float]) -> dict[str, float | int]:
-    """去极值后测算基准价指标（benchmark/median/p25/p75/min/max/sample/outlier）。"""
     prices = [float(p) for p in prices]
     if not prices:
         return {

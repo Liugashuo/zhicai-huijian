@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""任务二 Stage 4.3：证据溯源存储（EvidenceStore）。
-
-每个分块分配唯一 ID（bid_p{page}_c{idx}），实现「风险点 -> 原文段落 -> 页码」三级穿透。
-"""
+"""任务二 Stage 4.3：证据溯源存储（EvidenceStore）。"""
 
 from __future__ import annotations
 
@@ -14,7 +11,7 @@ from ..core.task_result import TaskResult
 
 
 class EvidenceStoreAgent(BaseAgent):
-    name = "EvidenceStoreAgent"
+    name = "EvidenceStore"
     state_key = "evidence"
 
     def run(self, state: StateManager) -> TaskResult:

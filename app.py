@@ -7,12 +7,12 @@ import tempfile
 
 import streamlit as st
 
-from zhicai.core.llm import MockLLM
 from zhicai.db.benchmark_store import BenchmarkStore
+from zhicai.llm import build_llm
 from zhicai.pipeline import RiskPipeline, SourcingPipeline
 
 st.set_page_config(page_title="智采慧鉴", layout="wide")
-llm = MockLLM()
+llm = build_llm()
 
 tab1, tab2 = st.tabs(["自主寻源", "风险研判"])
 

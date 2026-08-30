@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""任务二 Stage 4.6：六维度合规风险 AI 审查（ComplianceAgent）。
-
-规则引擎 + 可选 LLM 语义层，逐类对照原文，输出带 chunk_id 溯源标签的违规项。
-"""
+"""任务二 Stage 4.6：六维度合规风险 AI 审查（ComplianceAgent）。"""
 
 from __future__ import annotations
 
@@ -46,19 +43,21 @@ class ComplianceAgent(BaseAgent):
                     if key in seen:
                         continue
                     seen.add(key)
-                    findings.append({
-                        "chunk_id": chunk["chunk_id"],
-                        "section_title": chunk.get("section_title"),
-                        "rule_id": rule["id"],
-                        "dimension": rule["dimension"],
-                        "dimension_name": DIMENSION_NAMES[rule["dimension"]],
-                        "category": rule["category"],
-                        "severity": rule["severity"],
-                        "matched_text": m.group(0),
-                        "context": _snippet(full, m.start(), m.end()),
-                        "description": rule["description"],
-                        "suggestion": rule["suggestion"],
-                    })
+                    findings.append(
+                        {
+                            "chunk_id": chunk["chunk_id"],
+                            "section_title": chunk.get("section_title"),
+                            "rule_id": rule["id"],
+                            "dimension": rule["dimension"],
+                            "dimension_name": DIMENSION_NAMES[rule["dimension"]],
+                            "category": rule["category"],
+                            "severity": rule["severity"],
+                            "matched_text": m.group(0),
+                            "context": _snippet(full, m.start(), m.end()),
+                            "description": rule["description"],
+                            "suggestion": rule["suggestion"],
+                        }
+                    )
                     break
 
         # LLM 语义层（MockLLM 返回空，真实模型在此补充语义级发现）。

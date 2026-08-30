@@ -26,11 +26,7 @@ class ReportAgent(BaseAgent):
         compliance_score = int(compliance.get("score", 0))
         total = min(100, price_score + compliance_score)
 
-        payload = {
-            "score": total,
-            "price_analysis": price_analysis,
-            "findings": findings,
-        }
+        payload = {"score": total, "price_analysis": price_analysis, "findings": findings}
         summary = self.llm.summarize(payload) if self.llm else ""
         markdown = self._build_markdown(metadata, items, price_analysis, findings, total, summary)
 

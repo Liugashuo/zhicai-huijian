@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
-from .task_result import TaskResult, TaskStatus
-from .agent import BaseAgent
-from .state import StateManager
-from .llm import LLMProvider, MockLLM, OpenAICompatibleLLM
-from .pipeline import Pipeline
+"""核心编排层：Executor -> TaskResult -> Pipeline -> StateManager。"""
 
-__all__ = [
-    "TaskResult",
-    "TaskStatus",
-    "BaseAgent",
-    "StateManager",
-    "LLMProvider",
-    "MockLLM",
-    "OpenAICompatibleLLM",
-    "Pipeline",
-]
+from .agent import BaseAgent
+from .pipeline import Pipeline
+from .state import StateManager
+from .task_result import TaskResult, TaskStatus
+
+__all__ = ["BaseAgent", "Pipeline", "StateManager", "TaskResult", "TaskStatus"]

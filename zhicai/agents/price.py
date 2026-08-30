@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-"""任务二 Stage 4.5：价格偏离智能分析（PriceAgent）。
-
-三级匹配：LIKE 模糊 -> Jaccard 相似度 -> 标记 unknown。
-偏离度分级 + 不平衡报价识别。
-"""
+"""任务二 Stage 4.5：价格偏离智能分析（PriceAgent）。"""
 
 from __future__ import annotations
 
-from statistics import mean
 from typing import Any
 
 from ..algorithms.deviation import deviation_rate, grade_deviation
@@ -57,32 +52,51 @@ class PriceAgent(BaseAgent):
             bid_price = item.get("unit_price")
             is_accessory = any(k in name for k in ACCESSORY_KEYWORDS)
             if bid_price is None:
-                analyses.append({"name": name, "bid_price": None, "market_prices": [], "grade": "unknown",
-                                 "note": "报价单未解析出单价", "is_accessory": is_accessory})
+                analyses.append(
+                    {
+                        "name": name,
+                        "bid_price": None,
+                        "market_prices": [],
+                        "grade": "unknown",
+                        "note": "报价单未解析出单价",
+                        "is_accessory": is_accessory,
+                    }
+                )
                 continue
             bid_price = float(bid_price)
             prices = self._match(name)
             if not prices:
-                analyses.append({"name": name, "bid_price": bid_price, "market_prices": [],
-                                 "market_avg": None, "deviation_rate": None, "grade": "unknown",
-                                 "note": "无可比数据", "is_accessory": is_accessory})
+                analyses.append(
+                    {
+                        "name": name,
+                        "bid_price": bid_price,
+                        "market_prices": [],
+                        "market_avg": None,
+                        "deviation_rate": None,
+                        "grade": "unknown",
+                        "note": "无可比数据",
+                        "is_accessory": is_accessory,
+                    }
+                )
                 continue
             metrics = benchmark_metrics(prices)
             market_avg = float(metrics["benchmark_price"])
             rate = deviation_rate(bid_price, market_avg)
             grade = grade_deviation(rate)
             unbalanced = is_accessory and (rate is not None and rate > 0.3)
-            analyses.append({
-                "name": name,
-                "bid_price": bid_price,
-                "market_prices": prices,
-                "market_avg": market_avg,
-                "median_price": metrics["median_price"],
-                "deviation_rate": round(rate, 4) if rate is not None else None,
-                "grade": grade,
-                "is_accessory": is_accessory,
-                "unbalanced": unbalanced,
-                "note": "不平衡报价嫌疑" if unbalanced else "",
-            })
+            analyses.append(
+                {
+                    "name": name,
+                    "bid_price": bid_price,
+                    "market_prices": prices,
+                    "market_avg": market_avg,
+                    "median_price": metrics["median_price"],
+                    "deviation_rate": round(rate, 4) if rate is not None else None,
+                    "grade": grade,
+                    "is_accessory": is_accessory,
+                    "unbalanced": unbalanced,
+                    "note": "不平衡报价嫌疑" if unbalanced else "",
+                }
+            )
 
         return TaskResult.ok(self.name, analyses)

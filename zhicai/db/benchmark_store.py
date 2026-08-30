@@ -45,7 +45,9 @@ class BenchmarkStore:
     def close(self) -> None:
         self._conn.close()
 
-    def upsert_product(self, name: str, category: str | None = None, platform: str | None = None, url: str | None = None) -> int:
+    def upsert_product(
+        self, name: str, category: str | None = None, platform: str | None = None, url: str | None = None
+    ) -> int:
         row = self._conn.execute(
             "SELECT id FROM products WHERE name = ? AND platform IS ?", (name, platform)
         ).fetchone()
@@ -76,7 +78,6 @@ class BenchmarkStore:
         return int(cur.lastrowid)
 
     def search(self, name: str, limit: int = 20) -> list[dict[str, Any]]:
-        """第一级：数据库 LIKE 前缀模糊查询。"""
         prefix = (name or "")[:10]
         rows = self._conn.execute(
             """

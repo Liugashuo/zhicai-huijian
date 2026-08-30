@@ -13,7 +13,6 @@ class StateManager:
         self._state: dict[str, Any] = dict(initial or {})
         self._results: list[TaskResult] = []
 
-    # ---- 状态读写 ----
     def set(self, key: str, value: Any) -> None:
         self._state[key] = value
 
@@ -28,7 +27,6 @@ class StateManager:
             raise KeyError(f"StateManager 缺少必要状态: {key!r}")
         return self._state[key]
 
-    # ---- 结果日志 ----
     def record(self, result: TaskResult) -> None:
         self._results.append(result)
 
@@ -44,7 +42,4 @@ class StateManager:
         return None
 
     def snapshot(self) -> dict[str, Any]:
-        return {
-            "state": dict(self._state),
-            "results": [r.to_dict() for r in self._results],
-        }
+        return {"state": dict(self._state), "results": [r.to_dict() for r in self._results]}

@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""关键词相似度算法：Jaccard + Bigram。
-
-分词策略：
-- 英文：完整单词
-- 数字：数值
-- 中文：单字 + 二元组(bigram)
-"""
+"""关键词相似度算法：Jaccard + Bigram。"""
 
 from __future__ import annotations
 

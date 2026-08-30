@@ -1,19 +1,29 @@
 # -*- coding: utf-8 -*-
-"""任务二 · 六阶段研判流水线：PDF 解析 -> 证据存储 -> 结构化提取 -> 价格偏离 -> 合规审查 -> 报告生成。"""
+"""任务二 · 六阶段研判流水线。
+
+PDFParser -> EvidenceStore -> MarkdownParser -> PriceAgent -> ComplianceAgent -> ReportAgent
+"""
 
 from __future__ import annotations
 
 from typing import Any
 
-from ..agents import ComplianceAgent, EvidenceStoreAgent, ExtractionAgent, PDFParserAgent, PriceAgent, ReportAgent
-from ..core.llm import LLMProvider
+from ..agents import (
+    ComplianceAgent,
+    EvidenceStoreAgent,
+    MarkdownParserAgent,
+    PDFParserAgent,
+    PriceAgent,
+    ReportAgent,
+)
 from ..core.pipeline import Pipeline
 from ..core.state import StateManager
 from ..db.benchmark_store import BenchmarkStore
+from ..llm import LLM
 
 
 class RiskPipeline:
-    def __init__(self, llm: LLMProvider | None = None, store: BenchmarkStore | None = None) -> None:
+    def __init__(self, llm: LLM | None = None, store: BenchmarkStore | None = None) -> None:
         self.llm = llm
         self.store = store
 
@@ -23,7 +33,7 @@ class RiskPipeline:
         agents = [
             PDFParserAgent(self.llm),
             EvidenceStoreAgent(self.llm),
-            ExtractionAgent(self.llm),
+            MarkdownParserAgent(self.llm),
             PriceAgent(self.llm, store=self.store),
             ComplianceAgent(self.llm),
             ReportAgent(self.llm),

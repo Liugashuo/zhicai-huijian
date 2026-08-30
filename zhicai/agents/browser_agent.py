@@ -36,7 +36,7 @@ class BrowserAgent(BaseAgent):
         search_items: list[dict[str, Any]] = []
         products_extracted = False
         history: list[dict[str, Any]] = []
-        screenshots: list[str] = []
+        screenshots: list[Any] = []
 
         for step in range(self.max_steps):
             context = {
@@ -48,7 +48,7 @@ class BrowserAgent(BaseAgent):
                 "unvisited": [i for i in range(len(search_items)) if i not in visited],
                 "visited": sorted(visited),
             }
-            action = self.llm.decide_browser_action(context) if self.llm else {"action": "done"}
+            action = self.llm.decide_browser_action(context, screenshots) if self.llm else {"action": "done"}
             feedback = self.driver.execute(action)
             screenshots.append(self.driver.screenshot())
             screenshots = screenshots[-3:]

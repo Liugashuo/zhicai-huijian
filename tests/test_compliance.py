@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from zhicai.core.llm import MockLLM
-from zhicai.core.state import StateManager
 from zhicai.agents.compliance import ComplianceAgent
+from zhicai.core.state import StateManager
+from zhicai.llm import MockLLM
 
 
 class ComplianceTest(unittest.TestCase):

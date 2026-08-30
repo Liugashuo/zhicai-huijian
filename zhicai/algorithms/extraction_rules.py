@@ -40,11 +40,9 @@ def parse_line_items(text: str, tolerance: float = 0.02) -> list[dict[str, Any]]
             "subtotal": subtotal,
             "trap": False,
         }
-        # 小计当单价陷阱：数量>1 但小计与单价几乎相等。
         if qty > 1 and subtotal and abs(subtotal - unit_price) <= tolerance * max(unit_price, 1):
             item["trap"] = True
             item["subtotal"] = round(qty * unit_price, 2)
-        # 反向校验：小计应约等于 单价×数量。
         expected = round(qty * unit_price, 2)
         item["verified"] = abs(subtotal - expected) <= tolerance * max(expected, 1) or item["trap"]
         items.append(item)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from .compliance_rules import DIMENSIONS, RULES
-from .sites import SITES
+"""配置层：平台路由、合规规则库、运行配置。"""
 
-__all__ = ["DIMENSIONS", "RULES", "SITES"]
+from .sites import SITES, SiteConfig, sites_for_category
+
+__all__ = ["SITES", "SiteConfig", "sites_for_category"]
