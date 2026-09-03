@@ -14,11 +14,9 @@ from typing import Any
 
 
 class LLM(ABC):
-    """文本 + 视觉大模型领域接口（Qwen3-8B / Qwen3-VL）。
+    """文本 + 视觉大模型领域接口（Qwen 文本模型 / Qwen-VL 视觉模型）。
 
-    实现类：
-    - LangChainLLM：通过 LangChain（ChatOpenAI）调用 Qwen3 的 OpenAI 兼容接口；
-    - MockLLM：确定性实现，保证系统可离线运行、测试可复现。
+    实现：LangChainLLM，通过 LangChain（ChatOpenAI）调用 Qwen 的 OpenAI 兼容接口。
     """
 
     # ---- 任务一 · 寻源 ----

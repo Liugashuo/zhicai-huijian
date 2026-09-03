@@ -1,12 +1,16 @@
-# 运行与离线测试所需
+# LLM（LangChain 统一封装，调用 Qwen OpenAI 兼容接口）
 langchain-core>=0.3.0
 langchain-openai>=0.2.0
+
+# 文档解析与报告
 pymupdf>=1.24.0
 reportlab>=4.0.0
+
+# Web 前端
 streamlit>=1.35.0
 
-# 可选：真实浏览器自动化（browser-use，需 CDP 浏览器 + Qwen3-VL，离线演示不需要）
-# browser-use>=0.1.40
+# 浏览器自动化（Playwright 驱动本机 Edge，即 browser-use 的底层 CDP 引擎）
+playwright>=1.40.0
 
-# 可选：接入其它模型提供方时按需安装
-# langchain-community>=0.3.0
+# 可选：browser-use 高层 Agent 框架
+# browser-use>=0.1.40

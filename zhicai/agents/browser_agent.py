@@ -12,7 +12,7 @@ from typing import Any
 from ..core.agent import BaseAgent
 from ..core.state import StateManager
 from ..core.task_result import TaskResult
-from .browser_driver import BrowserDriver, MockBrowserDriver
+from .browser_driver import BrowserDriver
 
 
 class BrowserAgent(BaseAgent):
@@ -21,22 +21,25 @@ class BrowserAgent(BaseAgent):
 
     def __init__(self, llm=None, driver: BrowserDriver | None = None, max_steps: int = 60) -> None:
         super().__init__(llm)
-        self.driver = driver or MockBrowserDriver([])
+        self.driver = driver
         self.max_steps = max_steps
 
     def run(self, state: StateManager) -> TaskResult:
+        if self.driver is None:
+            raise RuntimeError("BrowserAgent 需要注入 BrowserDriver")
+
         product_name = state.require("product_name")
         analysis = state.get("product_analysis", {})
         target = int(state.get("target_count", 5))
         site = (analysis.get("sites") or ["京东"])[0]
 
-        self.driver.open(f"{site} 搜索: {product_name}")
+        self.driver.open(f"https://www.jd.com/Search?keyword={product_name}" if site == "京东" else f"{site} 搜索: {product_name}")
         collected: list[dict[str, Any]] = []
         visited: set[int] = set()
         search_items: list[dict[str, Any]] = []
         products_extracted = False
         history: list[dict[str, Any]] = []
-        screenshots: list[Any] = []
+        screenshots: list[str] = []
 
         for step in range(self.max_steps):
             context = {
@@ -63,7 +66,7 @@ class BrowserAgent(BaseAgent):
                 visited.add(int(action.get("index", 0)))
             elif kind == "extract_detail":
                 detail = feedback.get("detail")
-                if detail:
+                if detail and detail.get("price") is not None:
                     collected.append(detail)
                 self.driver.execute({"action": "go_back"})
             elif kind == "done":

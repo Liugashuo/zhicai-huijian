@@ -3,7 +3,7 @@
 
 from .benchmark import BenchmarkAgent
 from .browser_agent import BrowserAgent
-from .browser_driver import BrowserDriver, BrowserUseDriver, MockBrowserDriver
+from .browser_driver import BrowserDriver, PlaywrightBrowserDriver
 from .compliance import ComplianceAgent
 from .data_cleaning import DataCleaningAgent
 from .evidence_store import EvidenceStoreAgent
@@ -17,8 +17,7 @@ __all__ = [
     "BenchmarkAgent",
     "BrowserAgent",
     "BrowserDriver",
-    "BrowserUseDriver",
-    "MockBrowserDriver",
+    "PlaywrightBrowserDriver",
     "ComplianceAgent",
     "DataCleaningAgent",
     "EvidenceStoreAgent",

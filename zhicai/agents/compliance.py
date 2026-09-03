@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
-"""任务二 Stage 4.6：六维度合规风险 AI 审查（ComplianceAgent）。"""
+"""任务二 Stage 4.6：六维度合规风险 AI 审查（ComplianceAgent）。
+
+规则引擎做确定性筛查（快、准、可溯源），可选 LLM 语义审查补充发现。
+"""
 
 from __future__ import annotations
 
 import re
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from ..config.compliance_rules import DIMENSIONS, DIMENSION_NAMES, RULES
+from ..config.settings import COMPLIANCE_LLM_REVIEW
 from ..core.agent import BaseAgent
 from ..core.state import StateManager
 from ..core.task_result import TaskResult
@@ -60,18 +65,34 @@ class ComplianceAgent(BaseAgent):
                     )
                     break
 
-        # LLM 语义层（MockLLM 返回空，真实模型在此补充语义级发现）。
-        if self.llm is not None:
-            for chunk in chunks:
-                title = chunk.get("section_title") or ""
-                full = (f"{title}\n{chunk.get('content', '')}").strip()
-                for dim in DIMENSIONS:
-                    for f in self.llm.review_compliance(full, dim["key"]):
-                        key = (chunk["chunk_id"], f.get("rule_id", dim["key"]))
-                        if key in seen:
-                            continue
-                        seen.add(key)
-                        findings.append({**f, "chunk_id": chunk["chunk_id"], "dimension": dim["key"]})
+        # 可选 LLM 语义审查（默认关闭；开启时按「分块 × 维度」并行分析）。
+        if self.llm is not None and COMPLIANCE_LLM_REVIEW:
+            self._append_llm_findings(chunks, findings, seen)
 
         score = min(100, sum(_SEVERITY_WEIGHT.get(f["severity"], 4) for f in findings))
         return TaskResult.ok(self.name, {"findings": findings, "score": score})
+
+    def _append_llm_findings(
+        self,
+        chunks: list[dict[str, Any]],
+        findings: list[dict[str, Any]],
+        seen: set[tuple[str, str]],
+    ) -> None:
+        tasks = [(c, d["key"]) for c in chunks for d in DIMENSIONS]
+
+        def work(task: tuple[dict[str, Any], str]) -> tuple[dict[str, Any], str, list[dict[str, Any]]]:
+            chunk, dim = task
+            title = chunk.get("section_title") or ""
+            full = (f"{title}\n{chunk.get('content', '')}").strip()
+            return chunk, dim, self.llm.review_compliance(full, dim)
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            results = list(ex.map(work, tasks))
+
+        for chunk, dim, items in results:
+            for f in items:
+                key = (chunk["chunk_id"], f.get("rule_id", dim))
+                if key in seen:
+                    continue
+                seen.add(key)
+                findings.append({**f, "chunk_id": chunk["chunk_id"], "dimension": dim})

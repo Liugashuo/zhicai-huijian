@@ -25,8 +25,8 @@ _PRODUCT_PROMPT = ChatPromptTemplate.from_messages(
         ("system", "你是政府采购寻源分析专家。仅输出 JSON，不要输出多余文字。"),
         (
             "human",
-            '对商品进行分类并提取检索关键词：{name}\n'
-            '返回 JSON：{{"category": "电子/办公/通用物资/工程服务", "keywords": ["..."], "reasoning": "..."}}',
+            '对商品进行分类并提取检索关键词：{name}。category 只能选：电子、办公、通用物资、工程服务。\n'
+            '返回 JSON：{{"category": "电子", "keywords": ["..."], "reasoning": "..."}}',
         ),
     ]
 )
