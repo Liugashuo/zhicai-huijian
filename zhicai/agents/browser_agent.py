@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-"""任务一 Stage 3.2：VLM 自主驱动的浏览器 Agent。
-
-闭环：截图感知 -> 上下文推理 -> 动作执行 -> 反馈更新。
-保留最近 3 张截图与 20 条对话消息，旧上下文压缩为摘要。
-"""
+"""任务一 Stage 3.2：VLM 自主驱动的浏览器 Agent。"""
 
 from __future__ import annotations
 
+from threading import Event
 from typing import Any
 
 from ..core.agent import BaseAgent
@@ -19,10 +16,17 @@ class BrowserAgent(BaseAgent):
     name = "BrowserAgent"
     state_key = "sourced_items"
 
-    def __init__(self, llm=None, driver: BrowserDriver | None = None, max_steps: int = 60) -> None:
+    def __init__(
+        self,
+        llm=None,
+        driver: BrowserDriver | None = None,
+        max_steps: int = 60,
+        stop_event: Event | None = None,
+    ) -> None:
         super().__init__(llm)
         self.driver = driver
         self.max_steps = max_steps
+        self.stop_event = stop_event
 
     def run(self, state: StateManager) -> TaskResult:
         if self.driver is None:
@@ -33,7 +37,12 @@ class BrowserAgent(BaseAgent):
         target = int(state.get("target_count", 5))
         site = (analysis.get("sites") or ["京东"])[0]
 
-        self.driver.open(f"https://www.jd.com/Search?keyword={product_name}" if site == "京东" else f"{site} 搜索: {product_name}")
+        url = (
+            f"https://www.jd.com/Search?keyword={product_name}"
+            if site == "京东"
+            else f"https://www.baidu.com/s?wd={product_name}"
+        )
+        self.driver.open(url)
         collected: list[dict[str, Any]] = []
         visited: set[int] = set()
         search_items: list[dict[str, Any]] = []
@@ -42,6 +51,8 @@ class BrowserAgent(BaseAgent):
         screenshots: list[str] = []
 
         for step in range(self.max_steps):
+            if self.stop_event is not None and self.stop_event.is_set():
+                break
             context = {
                 "page_type": self.driver.page_type(),
                 "url": self.driver.current_url(),

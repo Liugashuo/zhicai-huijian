@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from threading import Event
 from typing import Any
 
 from ..agents import BenchmarkAgent, BrowserAgent, DataCleaningAgent, ProductAnalysisAgent
@@ -24,7 +25,12 @@ class SourcingPipeline:
         self.store = store
         self.driver = driver
 
-    def run(self, product_name: str, target_count: int = 5) -> dict[str, Any]:
+    def run(
+        self,
+        product_name: str,
+        target_count: int = 5,
+        stop_event: Event | None = None,
+    ) -> dict[str, Any]:
         owns_driver = self.driver is None
         driver = self.driver or PlaywrightBrowserDriver()
         try:
@@ -33,7 +39,7 @@ class SourcingPipeline:
             state.set("target_count", target_count)
             agents = [
                 ProductAnalysisAgent(self.llm),
-                BrowserAgent(self.llm, driver=driver),
+                BrowserAgent(self.llm, driver=driver, stop_event=stop_event),
                 DataCleaningAgent(self.llm),
                 BenchmarkAgent(self.llm),
             ]

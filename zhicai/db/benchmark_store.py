@@ -95,6 +95,16 @@ class BenchmarkStore:
         rows = self._conn.execute("SELECT * FROM products").fetchall()
         return [dict(r) for r in rows]
 
+    def all_benchmarks(self) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            """
+            SELECT p.name, p.category, b.price, b.platform, b.source_channel, b.source_url, b.captured_at
+            FROM price_benchmarks b JOIN products p ON p.id = b.product_id
+            ORDER BY b.captured_at DESC
+            """
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     def prices_for(self, name: str, limit: int = 100) -> list[float]:
         rows = self.search(name, limit=limit)
         return [float(r["price"]) for r in rows]
